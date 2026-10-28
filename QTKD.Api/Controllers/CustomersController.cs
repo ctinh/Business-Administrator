@@ -18,7 +18,7 @@ public class CustomersController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CustomerDto>>> GetCustomers()
     {
-        var customers await = m_CustomerService.GetAllCustomersAsync();
+        var customers = await m_CustomerService.GetAllCustomersAsync();
         return Ok(customers);
     }
 }
