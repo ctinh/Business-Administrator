@@ -31,7 +31,7 @@ public class UpdateContractRequest
 {
     public int CustomerId { get; set; }
     public DateOnly StartDate { get; set; }
-    public DateOnly EndDate { get; set }
+    public DateOnly EndDate { get; set; }
     public decimal ContractValue { get; set; }
     public string? ServiceTerms { get; set; }
     public string? AttachmentUrl { get; set; }
