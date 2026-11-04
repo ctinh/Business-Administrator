@@ -11,6 +11,7 @@ builder.Services.AddDbContext<QtkdDbContext>(options =>
 // register business services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IContractService, ContractService>();
+builder.Services.AddScoped<IPriceListService, PriceListService>();
 
 // register controller & swagger
 builder.Services.AddControllers();
