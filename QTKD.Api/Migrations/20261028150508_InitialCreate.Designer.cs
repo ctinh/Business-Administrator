@@ -12,7 +12,7 @@ using QTKD.Api.Data;
 namespace QTKD.Api.Migrations
 {
     [DbContext(typeof(QtkdDbContext))]
-    [Migration("20261028124347_InitialCreate")]
+    [Migration("20261028150508_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
