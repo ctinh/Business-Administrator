@@ -11,6 +11,7 @@ public class Contract
     public string? ServiceTerms { get; set; }
     public string? AttachmentUrl { get; set; }
     public string Status { get; set; } = "draft"; // draft, pending_approval, approved, rejected, revision_requested, active
+    public DateTime? SubmittedAt { get; set; }
 
     // navigation property
     public Customer? Customer { get; set; }
