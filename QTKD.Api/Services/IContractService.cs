@@ -118,17 +118,18 @@ public class ContractService : IContractService
             return ServiceResult<ContractDetailDto>.Failure("CTR_NOT_FOUND", $"contract with id {id} not found");
         }
 
-        // CTR-03: direct status transition from draft to approved is not allowed
-        if (!string.IsNullOrWhiteSpace(request.Status) && request.Status.Equals("approved", StringComparison.OrdinalIgnoreCase))
+        // CTR-03: direct status transition from draft to approved, active, or pending_approval via update is not allowed
+        var ForbiddenTargetStatuses = new[] { "approved", "active", "pending_approval" };
+        if (!string.IsNullOrWhiteSpace(request.Status) && ForbiddenTargetStatuses.Contains(request.Status.Trim(), StringComparer.OrdinalIgnoreCase))
         {
             return ServiceResult<ContractDetailDto>.Failure(
                 "CTR-03",
-                "CTR-03 violation: contracts cannot be moved directly to 'approved', they must go through the submission process first");
+                "CTR-03 violation: contracts cannot be moved directly to 'approved', 'active', or 'pending_approval', they must go through the submission process first");
         }
 
         // CTR-01: contracts can only be edited when their status is 'draft' or 'revision_requested'.
         var editableStatuses = new[] { "draft", "revision_requested" };
-        if (!editableStatuses.Contains(contract.Status))
+        if (!editableStatuses.Contains(contract.Status, StringComparer.OrdinalIgnoreCase))
         {
             return ServiceResult<ContractDetailDto>.Failure(
                 "CTR-01",
@@ -137,7 +138,7 @@ public class ContractService : IContractService
 
         // validate the customer
         var customer = await m_context.Customers.FirstOrDefaultAsync(c => c.Id == request.CustomerId);
-        if (customer == null || customer.Status != "active")
+        if (customer == null || !customer.Status.Equals("active", StringComparer.OrdinalIgnoreCase))
         {
             return ServiceResult<ContractDetailDto>.Failure(
                 "CTR_INVALID_CUSTOMER",
@@ -183,7 +184,7 @@ public class ContractService : IContractService
         }
 
         // double submit handling: if the contract is already in 'pending_approval' status, reject the duplicate submission attempt
-        if (contract.Status == "pending_approval")
+        if (contract.Status.Equals("pending_approval", StringComparison.OrdinalIgnoreCase))
         {
             return ServiceResult<ContractDetailDto>.Failure(
                 "CTR_ALREADY_SUBMITTED",
@@ -192,7 +193,7 @@ public class ContractService : IContractService
 
         // validate the contract status before submission (only 'draft' or 'revision_requested' are allowed)
         var SubmittableStatuses = new[] { "draft", "revision_requested" };
-        if (!SubmittableStatuses.Contains(contract.Status))
+        if (!SubmittableStatuses.Contains(contract.Status, StringComparer.OrdinalIgnoreCase))
         {
             return ServiceResult<ContractDetailDto>.Failure(
                 "CTR_INVALID_STATUS_FOR_SUBMIT",
@@ -200,7 +201,7 @@ public class ContractService : IContractService
         }
 
         // CTR-02: perform comprehensive validation: ensure the customer is valid, the effective period is valid, the contract value is greater than zero, and all required content/documents are provided
-        if (contract.Customer == null || contract.Customer.Status != "active")
+        if (contract.Customer == null || !contract.Customer.Status.Equals("active", StringComparison.OrdinalIgnoreCase))
         {
             return ServiceResult<ContractDetailDto>.Failure(
                 "CTR-02",
