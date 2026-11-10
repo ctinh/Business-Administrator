@@ -28,3 +28,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// expose program class for web application factory in integration tests
+public partial class Program { }
