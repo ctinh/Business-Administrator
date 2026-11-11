@@ -138,7 +138,7 @@ public class ContractService : IContractService
 
         // validate the customer
         var customer = await m_context.Customers.FirstOrDefaultAsync(c => c.Id == request.CustomerId);
-        if (customer == null || !customer.Status.Equals("active", StringComparer.OrdinalIgnoreCase))
+        if (customer == null || !customer.Status.Equals("active", StringComparison.OrdinalIgnoreCase))
         {
             return ServiceResult<ContractDetailDto>.Failure(
                 "CTR_INVALID_CUSTOMER",
